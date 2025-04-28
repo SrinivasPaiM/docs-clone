@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "@types/uuid": "^10.0.0"
+  },
+  "dependencies": {
+    "react-scripts": "^5.0.1",
+    "svgo": "^2.8.0"
+  }
+}

@@ -1,0 +1,2 @@
+use npm start in myclient, 
+use npm run devStart in server
