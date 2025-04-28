@@ -1,20 +1,32 @@
 const mongoose = require("mongoose");
 const Document = require("./Document");
+const express = require("express");
+const path = require("path");
+
+const app = express();
 
 // Connect to MongoDB
 mongoose.connect("mongodb://localhost/google-docs-clone", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => {
-  console.log("MongoDB connected successfully");
-})
-.catch(err => {
-  console.error("MongoDB connection error:", err);
+  .then(() => {
+    console.log("MongoDB connected successfully");
+  })
+  .catch(err => {
+    console.error("MongoDB connection error:", err);
+  });
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
 // Setup Socket.io
-const io = require("socket.io")(3001, {
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
@@ -63,3 +75,9 @@ async function findOrCreateDocument(id) {
     throw error; // Rethrow to handle in the socket listener
   }
 }
+
+// Start the server
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
